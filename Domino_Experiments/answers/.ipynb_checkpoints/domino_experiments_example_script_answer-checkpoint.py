@@ -13,6 +13,7 @@ from sklearn.ensemble import RandomForestRegressor
 username = os.environ['DOMINO_STARTING_USERNAME']
 experiment_name = f"random-forest-gen-{username}"
 
+
 # Check if the experiment already exists
 experiment = mlflow.get_experiment_by_name(experiment_name)
 
@@ -25,16 +26,22 @@ else:
     
     
 # Define hyperparameters for RandomForestRegressor
-n_estimators = 150
-max_depth = 8
-max_features = 6
+n_estimators = 100
+max_depth = 6
+max_features = 3
 
+
+# Get the current timestamp
+timestamp = time.time()
+
+# Create a descriptive run name that includes the hyperparameters and timestamp
+run_name = f"rf_n_estimators={n_estimators}_max_depth={max_depth}_max_features={max_features}_{timestamp}"
 
 # Enable auto-logging
 mlflow.autolog()
 
 # Start the run with the custom run name
-with mlflow.start_run(experiment_id=experiment_id):
+with mlflow.start_run(experiment_id=experiment_id, run_name=run_name):
     db = load_diabetes()
     X_train, X_test, y_train, y_test = train_test_split(db.data, db.target)
     rf = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, max_features=max_features)
